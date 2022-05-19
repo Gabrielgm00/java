@@ -42,6 +42,7 @@ public class TelaUsuario extends javax.swing.JFrame {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TelaUsuario");
         setPreferredSize(new java.awt.Dimension(500, 300));
         getContentPane().setLayout(null);
@@ -219,12 +220,13 @@ public class TelaUsuario extends javax.swing.JFrame {
                 txtNome.setText("");
                 pswSenha.setText("");
 
-                TelaLoja j;
-                j = new TelaLoja();
-                j.setVisible(true);
+                Telatabela tt;
+                tt = new Telatabela();
+                tt.setVisible(true);
                 dispose();
 
-            } else { //Senão encontrou o usuário
+                
+            } else { 
                 JOptionPane.showMessageDialog(null, "Usuário e/ou senha inválidos");
                 txtNome.requestFocus();
             }
