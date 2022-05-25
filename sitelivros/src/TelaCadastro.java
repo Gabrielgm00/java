@@ -165,9 +165,10 @@ public class TelaCadastro extends javax.swing.JFrame {
         getContentPane().add(pnlCadastro);
         pnlCadastro.setBounds(100, 10, 225, 300);
 
-        lblCor2.setIcon(new javax.swing.ImageIcon("C:\\Users\\T-Gamer\\Documents\\NetBeansProjects\\aula7padaria\\src\\imagens\\azul.jpg")); // NOI18N
+        lblCor2.setIcon(new javax.swing.ImageIcon(".\\src\\imagens\\azul.jpg")); 
         getContentPane().add(lblCor2);
         lblCor2.setBounds(0, 0, 440, 320);
+        setResizable(false);
 
         setSize(new java.awt.Dimension(450, 350));
         setLocationRelativeTo(null);
@@ -200,28 +201,28 @@ public class TelaCadastro extends javax.swing.JFrame {
             Connection con;
             PreparedStatement ps;
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/cadastrobanco", "root", "123gabriel123");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookpay", "root", TelaUsuario.dbPassword);
 
             ps = con.prepareStatement("INSERT INTO login VALUES(?, ?, ?)");
             ps.setString(1, txtNome.getText());
             ps.setString(2, txtSenha.getText());
             ps.setString(3, txtEmail.getText());
             ps.executeUpdate();
-
-            JOptionPane.showMessageDialog(null, "dados salvos com sucesso");
+            
+            JOptionPane.showMessageDialog(null, "Dados salvos com sucesso");
             txtNome.setText("");
             txtSenha.setText("");
             txtEmail.setText("");
             txtNome.requestFocus();
 
         } catch (ClassNotFoundException ex) {
-            JOptionPane.showMessageDialog(null, "Erro " + ex.getMessage() + "\nEntre em contato com o administrador e informe");
+            JOptionPane.showMessageDialog(null, "Código de erro: " + ex.getMessage() + "\nEntre em contato com o administrador e informe o número do erro. ");
         } catch (SQLException ex) {
             if (ex.getErrorCode() == 1062) {
-                JOptionPane.showMessageDialog(null, "O Nome que você usou ja esta cadastrador tente outro");
+                JOptionPane.showMessageDialog(null, "O email que você usou ja esta cadastrado. ");
                 txtNome.requestFocus();
             } else {
-                JOptionPane.showMessageDialog(null, "error numero" + ex.getErrorCode() + "\nEntre em contato com o administrador e informe o número do erro");
+                JOptionPane.showMessageDialog(null, "Código de erro: " + ex.getErrorCode() + "\nEntre em contato com o administrador e informe o número do erro. ");
             }
         }
 

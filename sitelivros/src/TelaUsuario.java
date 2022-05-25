@@ -10,7 +10,16 @@ import javax.swing.JOptionPane;
 
 public class TelaUsuario extends javax.swing.JFrame {
 
+    public static String dbPassword = JOptionPane.showInputDialog(null, "Insira a senha do root do Mysql","Banco de dados", JOptionPane.INFORMATION_MESSAGE);
+    Connection c;
+    
     public TelaUsuario() {
+        try {
+            this.c = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookpay", "root", dbPassword);
+        }catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Houve um problema ao se conectar ou senha incorreta.","Banco de dados",JOptionPane.WARNING_MESSAGE);
+            System.exit(0);
+        }
         initComponents();
     }
 
@@ -168,7 +177,6 @@ public class TelaUsuario extends javax.swing.JFrame {
         pnlLogin.setBounds(100, 10, 225, 300);
 
         lblCor.setForeground(new java.awt.Color(102, 153, 255));
-        lblCor.setIcon(new javax.swing.ImageIcon("C:\\Users\\T-Gamer\\Documents\\NetBeansProjects\\aula7padaria\\src\\imagens\\azul.jpg")); // NOI18N
         getContentPane().add(lblCor);
         lblCor.setBounds(0, 0, 440, 320);
 
@@ -209,7 +217,7 @@ public class TelaUsuario extends javax.swing.JFrame {
             PreparedStatement ps;
             ResultSet reu;
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/cadastrobanco", "root", "123gabriel123");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookpay", "root", dbPassword);
 
             ps = con.prepareStatement("SELECT * FROM login WHERE nome=? AND senha=?");
             ps.setString(1, txtNome.getText());

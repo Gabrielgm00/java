@@ -4,6 +4,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,6 +24,7 @@ public class Telatabela extends javax.swing.JFrame {
         btnSalvar.setEnabled(true);
         btnConsultar.setEnabled(true);
         txtTitulo.setEnabled(true);
+        txtBookPreco.setEnabled(true);
         
          txtEscolha.setEnabled(false);
 
@@ -53,12 +56,14 @@ public class Telatabela extends javax.swing.JFrame {
         lblAno = new javax.swing.JLabel();
         lblQuantidade = new javax.swing.JLabel();
         lblGenero = new javax.swing.JLabel();
+        lblPreco = new javax.swing.JLabel();
         txtTitulo = new javax.swing.JTextField();
         txtEscritor = new javax.swing.JTextField();
         txtEditora = new javax.swing.JTextField();
         txtAno = new javax.swing.JTextField();
         txtQuantidade = new javax.swing.JTextField();
         txtGenero = new javax.swing.JTextField();
+        txtPreco = new javax.swing.JTextField();
         pnlBusca = new javax.swing.JPanel();
         cmbVarios = new javax.swing.JComboBox<>();
         txtEscolha = new javax.swing.JTextField();
@@ -66,6 +71,9 @@ public class Telatabela extends javax.swing.JFrame {
         lblOpcao = new javax.swing.JLabel();
         btnBuscar = new javax.swing.JButton();
         lblBusqueProcura = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        lbBook = new javax.swing.JLabel();
+        txtBookPreco = new javax.swing.JTextField();
         lblCor = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -94,6 +102,19 @@ public class Telatabela extends javax.swing.JFrame {
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        tblTabela.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        tblTabela.setGridColor(new java.awt.Color(0, 0, 0));
+        tblTabela.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblTabela.setShowGrid(false);
+        tblTabela.setShowHorizontalLines(true);
+        tblTabela.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblTabelaMouseClicked(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                tblTabelaMouseReleased(evt);
             }
         });
         jScrollPane1.setViewportView(tblTabela);
@@ -151,7 +172,7 @@ public class Telatabela extends javax.swing.JFrame {
                     .addComponent(btnExcluir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAlterar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnConsultar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                    .addComponent(btnConsultar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 78, Short.MAX_VALUE)
                     .addComponent(btnVoltar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
         );
@@ -191,9 +212,18 @@ public class Telatabela extends javax.swing.JFrame {
         lblGenero.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblGenero.setText("Genero");
 
+        lblPreco.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblPreco.setText("Preço");
+
         txtTitulo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTituloActionPerformed(evt);
+            }
+        });
+
+        txtPreco.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPrecoActionPerformed(evt);
             }
         });
 
@@ -205,54 +235,66 @@ public class Telatabela extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlEscrevaLayout.createSequentialGroup()
-                        .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblAno, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                            .addComponent(lblQuantidade, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtEscritor, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
-                            .addComponent(txtEditora)
-                            .addComponent(txtGenero)
-                            .addComponent(txtAno)
-                            .addComponent(txtQuantidade)))
+                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
+                        .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlEscrevaLayout.createSequentialGroup()
-                        .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblEscritor, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
                             .addComponent(lblEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblGenero, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(lblGenero, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE))
+                        .addGap(255, 255, 255))
+                    .addGroup(pnlEscrevaLayout.createSequentialGroup()
+                        .addGap(196, 196, 196)
+                        .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtEscritor, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                            .addComponent(txtEditora, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                            .addComponent(txtGenero, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)))
+                    .addGroup(pnlEscrevaLayout.createSequentialGroup()
+                        .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(lblPreco, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblAno, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                            .addComponent(lblQuantidade, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtAno, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                                .addComponent(txtQuantidade))
+                            .addComponent(txtPreco, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         pnlEscrevaLayout.setVerticalGroup(
             pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlEscrevaLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(11, Short.MAX_VALUE)
                 .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblEscritor)
                     .addComponent(txtEscritor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblEditora)
                     .addComponent(txtEditora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblGenero)
                     .addComponent(txtGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblAno)
                     .addComponent(txtAno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblQuantidade)
                     .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlEscrevaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPreco)
+                    .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12))
         );
 
         pnlBusca.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -320,28 +362,52 @@ public class Telatabela extends javax.swing.JFrame {
                 .addGap(7, 7, 7))
         );
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setForeground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lbBook, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lbBook, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        txtBookPreco.setText("R$ ");
+        txtBookPreco.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtBookPreco.setEnabled(false);
+        txtBookPreco.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtBookPrecoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlSecundariaLayout = new javax.swing.GroupLayout(pnlSecundaria);
         pnlSecundaria.setLayout(pnlSecundariaLayout);
         pnlSecundariaLayout.setHorizontalGroup(
             pnlSecundariaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSecundariaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlSecundariaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlSecundariaLayout.createSequentialGroup()
-                        .addGroup(pnlSecundariaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(pnlSecundariaLayout.createSequentialGroup()
-                                .addComponent(pnlEscreva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(18, 18, 18)
-                                .addComponent(pnlBotoes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(pnlBusca, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap(9, Short.MAX_VALUE))
-                    .addGroup(pnlSecundariaLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 527, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
-            .addGroup(pnlSecundariaLayout.createSequentialGroup()
                 .addGap(222, 222, 222)
                 .addComponent(lblCadastro)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(pnlSecundariaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlSecundariaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlSecundariaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(pnlSecundariaLayout.createSequentialGroup()
+                            .addComponent(pnlEscreva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGap(18, 18, 18)
+                            .addComponent(pnlBotoes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(pnlBusca, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 527, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
+                .addGroup(pnlSecundariaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtBookPreco, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         pnlSecundariaLayout.setVerticalGroup(
             pnlSecundariaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -350,24 +416,29 @@ public class Telatabela extends javax.swing.JFrame {
                 .addComponent(lblCadastro)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlSecundariaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnlBotoes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlEscreva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pnlBusca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(92, 92, 92))
+                    .addGroup(pnlSecundariaLayout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBookPreco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlSecundariaLayout.createSequentialGroup()
+                        .addGroup(pnlSecundariaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(pnlBotoes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pnlEscreva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(pnlBusca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)))
+                .addGap(156, 156, 156))
         );
 
         getContentPane().add(pnlSecundaria);
-        pnlSecundaria.setBounds(25, 30, 540, 530);
+        pnlSecundaria.setBounds(25, 30, 840, 560);
         pnlSecundaria.getAccessibleContext().setAccessibleName("");
 
-        lblCor.setIcon(new javax.swing.ImageIcon("C:\\Users\\T-Gamer\\Documents\\NetBeansProjects\\sitelivros\\src\\imagens\\azul.jpg")); // NOI18N
         getContentPane().add(lblCor);
-        lblCor.setBounds(1, 0, 590, 590);
+        lblCor.setBounds(1, 0, 890, 590);
 
-        setSize(new java.awt.Dimension(602, 624));
+        setSize(new java.awt.Dimension(911, 644));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -409,9 +480,9 @@ public class Telatabela extends javax.swing.JFrame {
             Connection con;
             PreparedStatement ps;
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/cadastrobanco", "root", "123gabriel123");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookpay", "root", TelaUsuario.dbPassword);
 
-            ps = con.prepareStatement("INSERT INTO livros VALUES(?, ?, ?,?,?,?)");
+            ps = con.prepareStatement("INSERT INTO livros VALUES(?,?,?,?,?,?)");
             ps.setString(1, txtTitulo.getText());
             ps.setString(2, txtEscritor.getText());
             ps.setString(3, txtEditora.getText());
@@ -428,6 +499,7 @@ public class Telatabela extends javax.swing.JFrame {
             txtAno.setText("");
             txtQuantidade.setText("");
             txtGenero.setText("");
+            txtPreco.setText("");
             txtTitulo.requestFocus();
 
         } catch (ClassNotFoundException ex) {
@@ -446,15 +518,16 @@ public class Telatabela extends javax.swing.JFrame {
         try {
             Connection conexao;
             PreparedStatement st;
-            Class.forName("com.mysql.jdbc.Driver");
-            conexao = DriverManager.getConnection("jdbc:mysql://localhost:3306/cadastrobanco", "root", "123gabriel123");
-            st = conexao.prepareStatement("UPDATE livros SET escritor = ?, editora = ?, genero = ?, ano = ?, quantidade = ? WHERE titulo = ?");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conexao = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookpay", "root", TelaUsuario.dbPassword);
+            st = conexao.prepareStatement("UPDATE livros SET escritor = ?, editora = ?, genero = ?, ano = ?, quantidade = ?, preco = ? WHERE titulo = ?");
             st.setString(1, txtEscritor.getText());
             st.setString(2, txtEditora.getText());
             st.setString(3, txtGenero.getText());
             st.setString(4, txtAno.getText());
             st.setString(5, txtQuantidade.getText());
-            st.setString(6, txtTitulo.getText());
+            st.setString(6, txtPreco.getText());
+            st.setString(7, txtTitulo.getText());
 
             st.executeUpdate();
 
@@ -465,15 +538,18 @@ public class Telatabela extends javax.swing.JFrame {
             txtAno.setText("");
             txtQuantidade.setText("");
             txtGenero.setText("");
+            txtBookPreco.setText("R$ " + txtPreco.getText());
+            txtPreco.setText("");
             txtTitulo.requestFocus();
 
             btnAlterar.setEnabled(false);
             btnExcluir.setEnabled(false);
             btnVoltar.setEnabled(false);
+            txtPreco.setEnabled(true);
             btnSalvar.setEnabled(true);
             btnConsultar.setEnabled(true);
             txtTitulo.setEnabled(true);
-           // model.setRowCount(0);
+          
 
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null, "Você não tem o driver na biblioteca " + ex.getMessage());
@@ -496,17 +572,21 @@ public class Telatabela extends javax.swing.JFrame {
             PreparedStatement sta; 
             ResultSet reu;   
             Class.forName("com.mysql.cj.jdbc.Driver");
-            co = DriverManager.getConnection("jdbc:mysql://localhost:3306/cadastrobanco", "root", "123gabriel123");
+            co = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookpay", "root", TelaUsuario.dbPassword);
 
             sta = co.prepareStatement("SELECT * FROM  livros WHERE  titulo LIKE ?");
             sta.setString(1, "%" + txtTitulo.getText() + "%" );
             reu = sta.executeQuery();
             if (reu.next()) {
+                txtTitulo.setText(reu.getString("titulo"));
                 txtEscritor.setText(reu.getString("escritor"));
                 txtEditora.setText(reu.getString("editora"));
                 txtGenero.setText(reu.getString("genero"));
                 txtAno.setText(reu.getString("ano"));
                 txtQuantidade.setText(reu.getString("quantidade"));
+                txtPreco.setText(reu.getFloat("preco")+"");
+                txtBookPreco.setText("R$ " + reu.getFloat("preco"));
+                lbBook.setIcon(new javax.swing.ImageIcon(".\\src\\imagens\\"+reu.getString("titulo")+".jpg"));
                 
 
                 btnAlterar.setEnabled(true);
@@ -515,6 +595,7 @@ public class Telatabela extends javax.swing.JFrame {
                 btnSalvar.setEnabled(false);
                 btnConsultar.setEnabled(false);
                 txtTitulo.setEnabled(false);
+                txtPreco.setEnabled(true);
             //    model.setRowCount(0);
                 txtTitulo.requestFocus();
 
@@ -538,7 +619,7 @@ public class Telatabela extends javax.swing.JFrame {
             Connection co;
             PreparedStatement sta;
             Class.forName("com.mysql.cj.jdbc.Driver");
-            co = DriverManager.getConnection("jdbc:mysql://localhost:3306/cadastrobanco", "root", "123gabriel123");
+            co = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookpay", "root", TelaUsuario.dbPassword);
             sta = co.prepareStatement("DELETE FROM livros WHERE titulo=?");
             sta.setString(1, txtTitulo.getText());
             resultado = sta.executeUpdate();
@@ -551,6 +632,7 @@ public class Telatabela extends javax.swing.JFrame {
                  txtGenero.setText("");
                 txtAno.setText("");
                 txtQuantidade.setText("");
+                txtPreco.setText("");
                 txtTitulo.requestFocus();
 
                 btnAlterar.setEnabled(false);
@@ -559,7 +641,7 @@ public class Telatabela extends javax.swing.JFrame {
                 btnSalvar.setEnabled(true);
                 btnConsultar.setEnabled(true);
                 txtTitulo.setEnabled(true);
-             //   model.setRowCount(0);
+                txtPreco.setEnabled(true);
 
             } else { 
                 JOptionPane.showMessageDialog(null, "Não foi possível excluir o produto com este código");
@@ -581,7 +663,7 @@ public class Telatabela extends javax.swing.JFrame {
             ResultSet resultado;
 
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conexao = DriverManager.getConnection("jdbc:mysql://localhost:3306/cadastrobanco", "root", "123gabriel123");
+            conexao = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookpay", "root", TelaUsuario.dbPassword);
 
             if (varios.equalsIgnoreCase("Geral")) {
                 st = conexao.prepareStatement("SELECT * From livros");
@@ -736,13 +818,42 @@ public class Telatabela extends javax.swing.JFrame {
 
     }//GEN-LAST:event_cmbVariosItemStateChanged
 
-    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
-        txtTitulo.setText("");
+    private void txtBookPrecoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBookPrecoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtBookPrecoActionPerformed
+
+    private void tblTabelaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTabelaMouseReleased
+        String title = tblTabela.getValueAt(tblTabela.getSelectedRow(), 0).toString();
+        try {
+            Connection con;
+            PreparedStatement ps;
+            ResultSet rs;
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookpay", "root", TelaUsuario.dbPassword);
+            ps = con.prepareStatement("SELECT titulo, preco FROM livros where titulo=?");
+            ps.setString(1, title);
+            rs = ps.executeQuery();
+            rs.next();
+            lbBook.setIcon(new javax.swing.ImageIcon(".\\src\\imagens\\"+rs.getString(1)+".jpg"));
+            txtBookPreco.setText("R$ " + rs.getString(2));
+            txtTitulo.setText(rs.getString(1));
+            txtTitulo.requestFocus();
+            txtTitulo.selectAll();
+        } catch ( ClassNotFoundException | SQLException e){
+        }
+    }//GEN-LAST:event_tblTabelaMouseReleased
+
+    private void txtPrecoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPrecoActionPerformed
+
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {
         txtEscritor.setText("");
         txtEditora.setText("");
         txtAno.setText("");
         txtQuantidade.setText("");
         txtGenero.setText("");
+        txtPreco.setText("");
         txtTitulo.requestFocus();
 
         btnAlterar.setEnabled(false);
@@ -751,8 +862,29 @@ public class Telatabela extends javax.swing.JFrame {
         btnSalvar.setEnabled(true);
         btnConsultar.setEnabled(true);
         txtTitulo.setEnabled(true);
-      //  model.setRowCount(0);
-    }//GEN-LAST:event_btnVoltarActionPerformed
+        txtPreco.setEnabled(true);
+    }                                         
+
+    private void tblTabelaMouseClicked(java.awt.event.MouseEvent evt) {
+        String title = tblTabela.getValueAt(tblTabela.getSelectedRow(), 0).toString();
+        try {
+            Connection con;
+            PreparedStatement ps;
+            ResultSet rs;
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookpay", "root", TelaUsuario.dbPassword);
+            ps = con.prepareStatement("SELECT titulo, preco FROM livros where titulo=?");
+            ps.setString(1, title);
+            rs = ps.executeQuery();
+            rs.next();
+            lbBook.setIcon(new javax.swing.ImageIcon(".\\src\\imagens\\"+rs.getString(1)+".jpg"));
+            txtBookPreco.setText("R$ " + rs.getString(2));
+            txtTitulo.setText(rs.getString(1));
+            txtTitulo.requestFocus();
+            txtTitulo.selectAll();
+        } catch ( ClassNotFoundException | SQLException e){
+        }
+    }                                      
 
     /**
      * @param args the command line arguments
@@ -797,7 +929,9 @@ public class Telatabela extends javax.swing.JFrame {
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnVoltar;
     private javax.swing.JComboBox<String> cmbVarios;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbBook;
     private javax.swing.JLabel lblAno;
     private javax.swing.JLabel lblBusqueProcura;
     private javax.swing.JLabel lblCadastro;
@@ -806,6 +940,7 @@ public class Telatabela extends javax.swing.JFrame {
     private javax.swing.JLabel lblEscritor;
     private javax.swing.JLabel lblGenero;
     private javax.swing.JLabel lblOpcao;
+    private javax.swing.JLabel lblPreco;
     private javax.swing.JLabel lblProcura;
     private javax.swing.JLabel lblQuantidade;
     private javax.swing.JLabel lblTitulo;
@@ -815,10 +950,12 @@ public class Telatabela extends javax.swing.JFrame {
     private javax.swing.JPanel pnlSecundaria;
     private javax.swing.JTable tblTabela;
     private javax.swing.JTextField txtAno;
+    private javax.swing.JTextField txtBookPreco;
     private javax.swing.JTextField txtEditora;
     private javax.swing.JTextField txtEscolha;
     private javax.swing.JTextField txtEscritor;
     private javax.swing.JTextField txtGenero;
+    private javax.swing.JTextField txtPreco;
     private javax.swing.JTextField txtQuantidade;
     private javax.swing.JTextField txtTitulo;
     // End of variables declaration//GEN-END:variables
